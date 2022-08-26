@@ -7,18 +7,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: "Helm package"
-        uses: draios/action-helm-tools@v1.0.1
-        with:
-          action: "package"
-        env:
-          CHART_DIR: ./hellochart
-          ARTIFACTORY_URL: https://cyseereng.jfrog.io/ui/admin/repositories/local/helm-repos
-          ARTIFACTORY_USERNAME: ${{ secrets.ARTIFACTORY_HELM_USERNAME }}
-          ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_HELM_PASSWORD }}
 
       - name: "Helm publish"
-        uses: draios/action-helm-tools@v1.0.1
+        uses: mbovo/action-helm-tools@v1.0.0
         with:
           action: "publish"
         env:
