@@ -1,19 +1,19 @@
-name: Helm lint, test, package and publish
+name: Helm Artifactory
 
 on: push
 
 jobs:
-  helm-suite:
+  helm:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
 
-      - name: "Helm publish"
-        uses: mbovo/action-helm-tools@v1.0.0
-        with:
-          action: "publish"
-        env:
-          CHART_DIR: ./hellochart
-          ARTIFACTORY_URL: https://cyseereng.jfrog.io/ui/admin/repositories/local/helm-repos
-          ARTIFACTORY_USERNAME: ${{ secrets.ARTIFACTORY_HELM_USERNAME }}
-          ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_HELM_PASSWORD }}
+      - name: "Install helm"
+        uses: mamezou-tech/setup-helmfile@v1.0.0
+
+      - name: "Auth to artifactory"  
+        run: |
+          helm repo add helm-helm https://cyseereng.jfrog.io/artifactory/api/helm/helm-helm --username ${{ secrets.ARTIFACTORY_HELM_USERNAME }} --password ${{ secrets.ARTIFACTORY_HELM_PASSWORD }}
+          curl -u${{ secrets.ARTIFACTORY_HELM_USERNAME }}:${{ secrets.ARTIFACTORY_HELM_PASSWORD }} -T ./hellochart "https://cyseereng.jfrog.io/artifactory/helm-helm/hellochart"
+        
+        
