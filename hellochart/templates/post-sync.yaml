@@ -1,0 +1,25 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: test
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded
+spec:
+  template:
+    metadata:
+      labels:
+        name: test-postsync
+    spec:
+      containers:
+      - name: test-postsync
+        command: ["/bin/sh", "-c"]
+        args: ["az config set extension.use_dynamic_install=yes_without_prompt && az pipelines run --organization https://dev.azure.com/StruxureWareCloud --project \"Digital Services Platform\" --name deploy-gitops.argocd.poc --branch feature/argo --parameters manualEnv=dmnpint"]
+        image: mcr.microsoft.com/azure-cli
+        env:
+          - name: AZURE_DEVOPS_EXT_PAT
+            valueFrom:
+              secretKeyRef:
+                name: private-repo-creds
+                key: password
+      restartPolicy: Never
